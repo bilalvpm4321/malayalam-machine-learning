@@ -9,12 +9,9 @@ const STORAGE_KEY_MOCK_MODE = 'indic_qa_use_mock_api';
  * In production builds, use VITE_API_BASE_URL.
  */
 export function getApiBaseUrl(): string {
-  if (import.meta.env.DEV) {
-    return '/api-proxy';
-  }
   const saved = localStorage.getItem(STORAGE_KEY_API_URL);
   if (saved && saved.trim()) return saved.trim().replace(/\/+$/, '');
-  return (import.meta.env.VITE_API_BASE_URL || 'https://junior-eloquence-extinct.ngrok-free.dev').replace(/\/+$/, '');
+  return (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '');
 }
 
 export function setApiBaseUrl(url: string): void {
@@ -49,6 +46,7 @@ export class ApiService {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
         },
         signal: controller.signal,
       });
@@ -97,6 +95,7 @@ export class ApiService {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
         },
         body: JSON.stringify(payload),
         signal: controller.signal,
