@@ -1,5 +1,5 @@
 import type { HealthResponse, PredictionRequest, PredictionResponse } from '../types/api';
-import { INDICQA_MALAYALAM_TEST_SET } from '../data/indicqaMalayalam';
+import { INDICQA_MALAYALAM_TEST_SET, LANGUAGE_EXAMPLES } from '../data/indicqaMalayalam';
 
 /**
  * Normalizes text for basic word-level overlap in mock mode
@@ -38,19 +38,24 @@ export async function mockPredict(request: PredictionRequest): Promise<Predictio
   const simulatedLatency = Math.floor(Math.random() * 800) + 1600;
   await new Promise(resolve => setTimeout(resolve, simulatedLatency));
 
-  // Find matching test set item or use realistic extractive heuristic
-  const matchedItem = INDICQA_MALAYALAM_TEST_SET.find(
-    item => item.question.trim() === request.question.trim() || item.context.includes(request.context.slice(0, 30))
-  );
+  // Find matching test set item or language example
+  const languageExampleValues = Object.values(LANGUAGE_EXAMPLES);
+  const matchedItem =
+    INDICQA_MALAYALAM_TEST_SET.find(
+      item => item.question.trim() === request.question.trim() || item.context.includes(request.context.slice(0, 30))
+    ) ||
+    languageExampleValues.find(
+      item => item.question.trim() === request.question.trim() || item.context.includes(request.context.slice(0, 30))
+    );
 
   let predictedAnswer = '';
 
   if (matchedItem) {
     if (request.configuration === 'qlora') {
-      // QLoRA on IndicQA has high precision extractive answer
+      // QLoRA has high precision extractive answer
       predictedAnswer = matchedItem.expected_answer;
     } else if (request.configuration === 'base') {
-      // Base LLM without fine-tuning occasionally produces slightly more verbose answer
+      // Base LLM without fine-tuning
       predictedAnswer = `${matchedItem.expected_answer}`;
     } else {
       predictedAnswer = matchedItem.expected_answer;
@@ -60,8 +65,8 @@ export async function mockPredict(request: PredictionRequest): Promise<Predictio
     if (request.expected_answer) {
       predictedAnswer = request.expected_answer;
     } else {
-      const sentences = request.context.split(/[.?!]/).filter(s => s.trim().length > 0);
-      predictedAnswer = sentences[0]?.trim() || 'ഉത്തരം കണ്ടെത്താനായില്ല (Mock Output)';
+      const sentences = request.context.split(/[.?!।|]/).filter(s => s.trim().length > 0);
+      predictedAnswer = sentences[0]?.trim() || (request.language === 'en' ? 'Answer not found' : 'ഉത്തരം കണ്ടെത്താനായില്ല (Mock Output)');
     }
   }
 

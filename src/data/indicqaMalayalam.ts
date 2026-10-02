@@ -9,6 +9,51 @@ export const PRIMARY_MALAYALAM_EXAMPLE: DatasetItem = {
   expected_answer: 'തമിഴ്, തെലുങ്ക്, ഹിന്ദി',
 };
 
+export const LANGUAGE_EXAMPLES: Record<string, DatasetItem> = {
+  ml: PRIMARY_MALAYALAM_EXAMPLE,
+  en: {
+    id: 'indicqa-en-001',
+    topic: 'Alan Turing & Computer Science',
+    context:
+      'Alan Turing was an English mathematician, computer scientist, logician, cryptanalyst, and theoretical biologist. Turing was highly influential in the development of theoretical computer science, providing a formalisation of the concepts of algorithm and computation with the Turing machine, which can be considered a model of a general-purpose computer. During the Second World War, Turing worked for the Government Code and Cypher School at Bletchley Park, where he played a pivotal role in cracking intercepted coded messages, notably the German Enigma machine.',
+    question: 'Where did Alan Turing work during the Second World War to crack coded messages?',
+    expected_answer: 'Bletchley Park',
+  },
+  ta: {
+    id: 'indicqa-ta-001',
+    topic: 'தஞ்சைப் பெரிய கோவில் (Brihadisvara Temple)',
+    context:
+      'தஞ்சைப் பெரிய கோவில் அல்லது பெருவுடையார் கோயில் என்பது தமிழ்நாட்டின் தஞ்சாவூரில் அமைந்துள்ள ஒரு புகழ்பெற்ற இந்துக் கோயிலாகும். இக்கோயில் முதலாம் இராசராச சோழனால் கி.பி 1010-ஆம் ஆண்டில் கட்டி முடிக்கப்பட்டது. இது சோழர் கால திராவிடக் கட்டடக் கலைக்கு சிறந்த சான்றாக விளங்குகிறது.',
+    question: 'தஞ்சைப் பெரிய கோவிலைக் கட்டிய மன்னர் யார்?',
+    expected_answer: 'முதலாம் இராசராச சோழன்',
+  },
+  kn: {
+    id: 'indicqa-kn-001',
+    topic: 'ಹಂಪಿ ಮತ್ತು ವಿಜಯನಗರ ಸಾಮ್ರಾಜ್ಯ (Hampi History)',
+    context:
+      'ಹಂಪಿ ಕರ್ನಾಟಕದ ಬಳ್ಳಾರಿ ಜಿಲ್ಲೆಯಲ್ಲಿರುವ ಐತಿಹಾಸಿಕ ತಾಣವಾಗಿದೆ. ಇದು ೧೪ನೇ ಶತಮಾನದಲ್ಲಿ ವಿಜಯನಗರ ಸಾಮ್ರಾಜ್ಯದ ರಾಜಧಾನಿಯಾಗಿತ್ತು. ತುಂಗಭದ್ರಾ ನದಿಯ ದಡದಲ್ಲಿರುವ ಈ ಪ್ರದೇಶವು ತನ್ನ ಅದ್ಭುತ ವಾಸ್ತುಶಿಲ್ಪ ಮತ್ತು ಯುನೆಸ್ಕೋ ವಿಶ್ವ ಪರಂಪರೆಯ ತಾಣವಾಗಿ ಜಗತ್ಪ್ರಸಿದ್ಧವಾಗಿದೆ.',
+    question: 'ಹಂಪಿ ಯಾವ ನದಿಯ ದಡದಲ್ಲಿದೆ?',
+    expected_answer: 'ತುಂಗಭದ್ರಾ ನದಿ',
+  },
+  hi: {
+    id: 'indicqa-hi-001',
+    topic: 'चंद्रयान-3 मिशन (Chandrayaan-3 Mission)',
+    context:
+      '23 अगस्त 2023 को इसरो के चंद्रयान-3 अंतरिक्ष यान ने चंद्रमा के दक्षिणी ध्रुव पर सफलतापूर्वक सॉफ्ट लैंडिंग की। इसके साथ ही भारत चंद्रमा के दक्षिणी ध्रुव पर उतरने वाला विश्व का पहला देश बन गया। इस मिशन में विक्रम लैंडर और प्रज्ञान रोवर शामिल थे।',
+    question: 'चंद्रयान-3 के लैंडर का नाम क्या था?',
+    expected_answer: 'विक्रम लैंडर',
+  },
+  te: {
+    id: 'indicqa-te-001',
+    topic: 'చార్మినార్ చరిత్ర (Charminar Hyderabad)',
+    context:
+      'చార్మినార్ తెలంగాణ రాష్ట్ర రాజధాని హైదరాబాద్‌లో ఉన్న ప్రసిద్ధ చారిత్రక కట్టడం. దీనిని 1591 లో కుతుబ్ షాహీ వంశానికి చెందిన ఐదవ సుల్తాన్ ముహమ్మద్ కులీ కుతుబ్ షా నిర్మించారు. మూసీ నది తూర్పు ఒడ్డున ఈ కట్టడం ఉంది.',
+    question: 'చార్మినార్‌ను ఏ సంవత్సరంలో నిర్మించారు?',
+    expected_answer: '1591',
+  },
+  auto: PRIMARY_MALAYALAM_EXAMPLE,
+};
+
 export const INDICQA_MALAYALAM_TEST_SET: DatasetItem[] = [
   PRIMARY_MALAYALAM_EXAMPLE,
   {

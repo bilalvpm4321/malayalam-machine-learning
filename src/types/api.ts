@@ -1,4 +1,4 @@
-export type LanguageId = 'ml' | 'hi' | 'ta' | 'te' | 'en';
+export type LanguageId = 'ml' | 'en' | 'ta' | 'kn' | 'hi' | 'te' | 'auto';
 
 export type TaskId = 'qa' | 'summarization' | 'translation';
 

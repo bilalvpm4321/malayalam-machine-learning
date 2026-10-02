@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { EXPERIMENT_CONFIGS, LANGUAGES, TASKS } from '../config/constants';
-import { PRIMARY_MALAYALAM_EXAMPLE } from '../data/indicqaMalayalam';
+import { LANGUAGE_EXAMPLES, PRIMARY_MALAYALAM_EXAMPLE } from '../data/indicqaMalayalam';
 import { ApiService } from '../services/api';
 import type { PredictionResponse } from '../types/api';
 import { PageContainer } from '../components/layout/PageContainer';
@@ -46,11 +46,12 @@ export const Playground: React.FC = () => {
   const [copiedAnswer, setCopiedAnswer] = useState<boolean>(false);
   const [showRawJson, setShowRawJson] = useState<boolean>(false);
 
-  // Load standard Malayalam sample
+  // Load language-specific sample example
   const handleLoadExample = () => {
-    setContext(PRIMARY_MALAYALAM_EXAMPLE.context);
-    setQuestion(PRIMARY_MALAYALAM_EXAMPLE.question);
-    setExpectedAnswer(PRIMARY_MALAYALAM_EXAMPLE.expected_answer);
+    const example = LANGUAGE_EXAMPLES[currentLanguage] || PRIMARY_MALAYALAM_EXAMPLE;
+    setContext(example.context);
+    setQuestion(example.question);
+    setExpectedAnswer(example.expected_answer);
     setError(null);
   };
 
@@ -70,7 +71,7 @@ export const Playground: React.FC = () => {
       return;
     }
     if (!question.trim()) {
-      setError({ message: 'Please enter a Malayalam question to ask the model.' });
+      setError({ message: 'Please enter a question to ask the model.' });
       return;
     }
 
@@ -91,8 +92,9 @@ export const Playground: React.FC = () => {
       setResponse(result);
 
       // Record this run into persistent experiment history
+      const langObj = LANGUAGES.find(l => l.id === currentLanguage);
       addHistoryRecord({
-        language: currentLanguage === 'ml' ? 'Malayalam' : currentLanguage,
+        language: langObj ? langObj.name : currentLanguage,
         languageCode: currentLanguage,
         task: currentTask,
         model: result.model || 'Qwen/Qwen2.5-3B-Instruct',
