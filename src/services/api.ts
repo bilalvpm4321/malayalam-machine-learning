@@ -88,6 +88,7 @@ export class ApiService {
         context: request.context,
         question: request.question,
         expected_answer: request.expected_answer || '',
+        max_new_tokens: request.max_new_tokens || 128,
       };
 
       const response = await fetch(`${baseUrl}/predict`, {
@@ -148,6 +149,8 @@ export class ApiService {
         f1: typeof data.f1 === 'number' ? data.f1 : null,
         similarity: typeof data.similarity === 'number' ? data.similarity : null,
         latency_ms: typeof data.latency_ms === 'number' ? data.latency_ms : clientLatency,
+        tokens_generated: typeof data.tokens_generated === 'number' ? data.tokens_generated : undefined,
+        contains_replacement_char: typeof data.contains_replacement_char === 'boolean' ? data.contains_replacement_char : undefined,
         raw_response: data,
         is_mock: false,
       };

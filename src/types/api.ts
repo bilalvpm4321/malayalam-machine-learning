@@ -40,6 +40,7 @@ export interface QARequest {
   context: string;
   question: string;
   expected_answer?: string;
+  max_new_tokens?: number;
 }
 
 export interface QAResponse {
@@ -52,6 +53,8 @@ export interface QAResponse {
   f1?: number | null;
   similarity?: number | null;
   latency_ms?: number;
+  tokens_generated?: number;
+  contains_replacement_char?: boolean;
   raw_response?: Record<string, unknown>;
   is_mock?: boolean;
 }

@@ -14,7 +14,7 @@ from pydantic import BaseModel
 # 1. Model Configuration
 MODEL_ID = "Qwen/Qwen2.5-3B-Instruct"
 MAX_LENGTH = 1536
-MAX_NEW_TOKENS = 64
+MAX_NEW_TOKENS = 128
 
 # 2. Multi-Lingual System Prompts
 LANGUAGE_SYSTEM_PROMPTS = {
@@ -95,6 +95,7 @@ class PredictionRequest(BaseModel):
     context: str
     question: str
     expected_answer: Optional[str] = ""
+    max_new_tokens: Optional[int] = 128
 
 @app.get("/health")
 def health_check():
@@ -103,6 +104,7 @@ def health_check():
         "model": MODEL_ID,
         "supported_languages": list(LANGUAGE_SYSTEM_PROMPTS.keys()),
         "supported_configurations": ["base"],
+        "max_new_tokens_default": MAX_NEW_TOKENS,
         "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU",
         "version": "2.5.0"
     }
@@ -110,6 +112,7 @@ def health_check():
 @app.post("/predict")
 def predict(req: PredictionRequest):
     t0 = time.time()
+    gen_tokens_limit = req.max_new_tokens if req.max_new_tokens and req.max_new_tokens > 0 else MAX_NEW_TOKENS
     
     # Format chat prompt using the requested language
     messages = format_qwen_chat_prompt(
@@ -129,14 +132,23 @@ def predict(req: PredictionRequest):
     with torch.inference_mode():
         outputs = model.generate(
             **inputs,
-            max_new_tokens=MAX_NEW_TOKENS,
+            max_new_tokens=gen_tokens_limit,
             do_sample=False,
-            pad_token_id=tokenizer.eos_token_id
+            pad_token_id=tokenizer.eos_token_id,
+            eos_token_id=tokenizer.eos_token_id,
         )
     
     response_tokens = outputs[0][inputs.input_ids.shape[1]:]
     generated_answer = tokenizer.decode(response_tokens, skip_special_tokens=True).strip()
     latency_ms = int((time.time() - t0) * 1000)
+    
+    tokens_count = len(response_tokens)
+    has_ufffd = "\ufffd" in generated_answer
+    
+    # Research & Debug Logging (Transparent inspection without modifying generated text)
+    print(f"[FASTAPI DEBUG] Lang: '{req.language}' | Config: '{req.configuration}' | Configured max_new_tokens: {gen_tokens_limit} | Tokens generated: {tokens_count}")
+    print(f"[FASTAPI DEBUG] repr(answer): {repr(generated_answer)}")
+    print(f"[FASTAPI DEBUG] Contains U+FFFD (): {has_ufffd}")
     
     # Calculate exact match if ground truth provided
     expected = (req.expected_answer or "").strip()
@@ -149,6 +161,8 @@ def predict(req: PredictionRequest):
         "f1": 1.0 if exact_match == 1 else None,
         "similarity": 1.0 if exact_match == 1 else None,
         "latency_ms": latency_ms,
+        "tokens_generated": tokens_count,
+        "contains_replacement_char": has_ufffd,
         "model": MODEL_ID,
         "configuration": req.configuration or "base",
         "language": req.language
